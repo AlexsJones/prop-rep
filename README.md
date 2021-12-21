@@ -4,6 +4,8 @@
 
 A golang command line tool to show you which organisations are contributing to a repository.
 
+![demo](./images/demo.gif)
+
 ```
 prop-rep scan -r cncf/tag-app-delivery -v
 44 contributors found
