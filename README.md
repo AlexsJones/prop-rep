@@ -1,5 +1,7 @@
 # Prop-rep
 
+[![Maintainability](https://api.codeclimate.com/v1/badges/0d8492035cb7a262ef8b/maintainability)](https://codeclimate.com/github/AlexsJones/prop-rep/maintainability)
+
 A golang command line tool to show you which organisations are contributing to a repository.
 
 ```
