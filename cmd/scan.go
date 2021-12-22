@@ -141,9 +141,9 @@ var scanCmd = &cobra.Command{
 		columnFmt := color.New(color.FgYellow).SprintfFunc()
 		var tbl table.Table
 		if !verbose {
-			tbl = table.New("Contributors", "Organisation")
+			tbl = table.New("Organisation", "Contributors")
 		} else {
-			tbl = table.New("Contributors", "Organisation", "Users")
+			tbl = table.New("Organisation", "Contributors", "Users")
 		}
 		tbl.WithHeaderFormatter(headerFmt).WithFirstColumnFormatter(columnFmt)
 
