@@ -22,4 +22,4 @@ noisetor                 1             SuperQ
 
 ## Dependencies
 
-A `GITHUB_TOKEN` environment variable is required to access the GitHub API.
+Generate a Personal Access Token at [https://github.com/settings/tokens](https://github.com/settings/tokens) which needs the `read:org` scope. Use this token as `GITHUB_TOKEN` environment variable, which is required to access the GitHub API.
