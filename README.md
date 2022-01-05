@@ -4,6 +4,8 @@
 
 A golang command line tool to show you which organisations are contributing to a repository.
 
+Get the latest binary [here](https://github.com/AlexsJones/prop-rep/releases/)
+
 ![demo](./images/demo.gif)
 
 ```
@@ -23,3 +25,7 @@ noisetor                 1             SuperQ
 ## Dependencies
 
 Generate a Personal Access Token at [https://github.com/settings/tokens](https://github.com/settings/tokens) which needs the `read:org` scope. Use this token as `GITHUB_TOKEN` environment variable, which is required to access the GitHub API.
+
+## Releasing
+
+This project uses `goreleaser` to release a new build `goreleaser --rm-dist` after creating a new local tag
