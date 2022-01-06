@@ -8,6 +8,7 @@ Get the latest binary [here](https://github.com/AlexsJones/prop-rep/releases/)
 
 ![demo](./images/demo.gif)
 
+
 ```
 prop-rep scan -r prometheus/prom2json -v
 17 contributors found
