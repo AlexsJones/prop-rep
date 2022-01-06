@@ -22,6 +22,13 @@ voxpupuli                1             roidelapluie
 noisetor                 1             SuperQ
 ```
 
+```
+prop-rep scan -r prometheus/prom2json -g 
+open graph.png
+```
+
+![graph](images/graph.png)
+
 ## Dependencies
 
 Generate a Personal Access Token at [https://github.com/settings/tokens](https://github.com/settings/tokens) which needs the `read:org` scope. Use this token as `GITHUB_TOKEN` environment variable, which is required to access the GitHub API.
@@ -29,3 +36,7 @@ Generate a Personal Access Token at [https://github.com/settings/tokens](https:/
 ## Releasing
 
 This project uses `goreleaser` to release a new build `goreleaser --rm-dist` after creating a new local tag
+
+## Caveats
+
+Organisations a user is displayed as a member of will only be visible if they are a public member of that organisation ( https://github.com/orgs/<ORG>/people).
