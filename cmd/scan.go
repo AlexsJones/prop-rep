@@ -16,14 +16,17 @@ limitations under the License.
 package cmd
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"os"
 	"sort"
 	"strings"
 
 	"github.com/fatih/color"
+	"github.com/goccy/go-graphviz"
 	"github.com/google/go-github/v41/github"
 	"github.com/rodaine/table"
 	"github.com/spf13/cobra"
@@ -31,8 +34,10 @@ import (
 )
 
 var (
-	all     bool
-	verbose bool
+	all       bool
+	verbose   bool
+	graph     bool
+	graphPath string
 )
 
 func parseRepoToString(repo string) (string, string, error) {
@@ -137,30 +142,91 @@ var scanCmd = &cobra.Command{
 		}
 		sort.Sort(sort.Reverse(sort.IntSlice(a)))
 
-		headerFmt := color.New(color.FgGreen, color.Underline).SprintfFunc()
-		columnFmt := color.New(color.FgYellow).SprintfFunc()
-		var tbl table.Table
-		if !verbose {
-			tbl = table.New("Organisation", "Contributors")
-		} else {
-			tbl = table.New("Organisation", "Contributors", "Users")
-		}
-		tbl.WithHeaderFormatter(headerFmt).WithFirstColumnFormatter(columnFmt)
-
-		for _, k := range a {
-			for idx, s := range n[k] {
-				if !all && idx >= 4 {
-					break
+		if graph {
+			g := graphviz.New()
+			graph, err := g.Graph()
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer func() {
+				if err := graph.Close(); err != nil {
+					log.Fatal(err)
 				}
-				if verbose {
-					tbl.AddRow(s, k, strings.Join(organisationalUsers[s], ", "))
-				} else {
-					tbl.AddRow(s, k)
+				g.Close()
+			}()
+
+			// Generate graph
+			topLevelRepo, err := graph.CreateNode(repoName)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			for _, k := range a {
+				for _, s := range n[k] {
+					org, err := graph.CreateNode(s)
+					if err != nil {
+						log.Fatal(err)
+					}
+					tmpName := fmt.Sprintf("%s-%s", repoName, s)
+					_, err = graph.CreateEdge(tmpName, topLevelRepo, org)
+					if err != nil {
+						log.Fatal(err)
+					}
+
+					// Generate the user to org edges
+					if verbose {
+						for _, u := range organisationalUsers[s] {
+
+							user, err := graph.CreateNode(u)
+							if err != nil {
+								log.Fatal(err)
+							}
+							tmpName := fmt.Sprintf("%s-%s", s, u)
+							_, err = graph.CreateEdge(tmpName, org, user)
+							if err != nil {
+								log.Fatal(err)
+							}
+
+						}
+					}
+
 				}
 			}
-		}
-		tbl.Print()
 
+			var buf bytes.Buffer
+			if err := g.Render(graph, "dot", &buf); err != nil {
+				log.Fatal(err)
+			}
+
+			if err := g.RenderFilename(graph, graphviz.PNG, graphPath); err != nil {
+				log.Fatal(err)
+			}
+
+		} else {
+			headerFmt := color.New(color.FgGreen, color.Underline).SprintfFunc()
+			columnFmt := color.New(color.FgYellow).SprintfFunc()
+			var tbl table.Table
+			if !verbose {
+				tbl = table.New("Organisation", "Contributors")
+			} else {
+				tbl = table.New("Organisation", "Contributors", "Users")
+			}
+			tbl.WithHeaderFormatter(headerFmt).WithFirstColumnFormatter(columnFmt)
+
+			for _, k := range a {
+				for idx, s := range n[k] {
+					if !all && idx >= 4 {
+						break
+					}
+					if verbose {
+						tbl.AddRow(s, k, strings.Join(organisationalUsers[s], ", "))
+					} else {
+						tbl.AddRow(s, k)
+					}
+				}
+			}
+			tbl.Print()
+		}
 	},
 }
 
@@ -168,6 +234,8 @@ func init() {
 	scanCmd.Flags().BoolVarP(&all, "all", "a", false, "Print all results")
 	scanCmd.Flags().StringP("repo", "r", "", "The GitHub repository to scan e.g. AlexsJones/prop-rep")
 	scanCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Print verbose output")
+	scanCmd.Flags().BoolVarP(&graph, "graph", "g", false, "Print graph output")
+	scanCmd.Flags().StringVarP(&graphPath, "graph-path", "p", "graph.png", "Path to save graph to. Defaults to graph.png")
 	scanCmd.MarkFlagRequired("repo")
 	rootCmd.AddCommand(scanCmd)
 
