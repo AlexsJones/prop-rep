@@ -33,10 +33,11 @@ open graph.png
 
 Generate a Personal Access Token at [https://github.com/settings/tokens](https://github.com/settings/tokens) which needs the `read:org` scope. Use this token as `GITHUB_TOKEN` environment variable, which is required to access the GitHub API.
 
-## Releasing
+## Building
 
-This project uses `goreleaser` to release a new build `goreleaser --rm-dist` after creating a new local tag
+Linux users may find `stdio.h` is missing as an error message. 
+For platforms such as Ubuntu you can circumvent this by installing `sudo apt install libc6-dev`
 
 ## Caveats
 
-Organisations a user is displayed as a member of will only be visible if they are a public member of that organisation ( https://github.com/orgs/<ORG>/people).
+- Organisations a user is displayed as a member of will only be visible if they are a public member of that organisation ( https://github.com/orgs/<ORG>/people).
