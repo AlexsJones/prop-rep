@@ -23,13 +23,6 @@ voxpupuli                1             roidelapluie
 noisetor                 1             SuperQ
 ```
 
-```
-prop-rep scan -r prometheus/prom2json -g 
-open graph.png
-```
-
-![graph](images/graph.png)
-
 ## Dependencies
 
 Generate a Personal Access Token at [https://github.com/settings/tokens](https://github.com/settings/tokens) which needs the `read:org` scope. Use this token as `GITHUB_TOKEN` environment variable, which is required to access the GitHub API.
